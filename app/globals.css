@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #007AFF;
+  --color-background: #F5F7FA;
+  --color-foreground: #333333;
+}
+
+/* Custom Utilities */
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1rem;
+  max-width: 1280px;
+}
