@@ -17,11 +17,36 @@ export default function InquiryPage() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // 送信シミュレーション
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+    const formData = new FormData(e.currentTarget);
+    const payload = {
+      facility_name: formData.get("facility"),
+      person_name: formData.get("name"),
+      contact_info: `Email: ${formData.get("email")}, Phone: ${formData.get("phone")}`,
+      inquiry_body: formData.get("content"),
+    };
+
+    try {
+      const response = await fetch("/api/inquiry", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setIsSubmitted(true);
+      } else {
+        alert(data.error || "送信に失敗しました。");
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("通信エラーが発生しました。時間をおいて再度お試しください。");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSubmitted) {

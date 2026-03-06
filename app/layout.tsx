@@ -1,12 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
-
-const notoSansJP = Noto_Sans_JP({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-noto-sans-jp",
-});
 
 export const metadata: Metadata = {
   title: "CogEvo サポートAI",
@@ -20,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body className={`${notoSansJP.className} bg-background text-foreground antialiased min-h-screen flex flex-col`}>
+      <body className={`font-sans bg-background text-foreground antialiased min-h-screen flex flex-col`}>
         {children}
       </body>
     </html>

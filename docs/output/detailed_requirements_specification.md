@@ -18,7 +18,7 @@
 - **課題**: 専門的問い合わせによるサポート部門の疲弊、ユーザーの待ち時間発生。
 - **顧客セグメント**: ITリテラシーが高くない介護・福祉施設スタッフ（タブレット利用中心）。
 - **独自の価値提案**: 「エンジニアの頭脳」と「メンターの語り口」を持つAIによる、専門用語を使わない即時解決サポート。
-- **ソリューション**: Gemini API + RAGを活用した自動応答チャットボット。
+- **ソリューション**: OpenAI API + RAGを活用した自動応答チャットボット。
 - **チャネル**: Webブラウザ（QRコードや製品ページリンク経由）。
 
 ### 2.2 目標（KPI/KGI）
@@ -55,7 +55,7 @@
 | 優先度 | 機能名 | 概要 |
 | :--- | :--- | :--- |
 | **Must** | **簡易認証** | 共通パスワード入力によるアクセス制限 |
-| **Must** | **RAG検索・回答生成** | Gemini APIを利用した、社内ドキュメントに基づく回答生成 |
+| **Must** | **RAG検索・回答生成** | OpenAI APIを利用した、社内ドキュメントに基づく回答生成 |
 | **Must** | **テキストチャットUI** | 対話形式のインターフェース、免責事項表示 |
 | **Must** | **音声入力** | Web Speech APIを用いた音声認識ボタン |
 | **Must** | **クイック質問** | 頻出質問のワンタップ送信ボタン |
@@ -72,7 +72,7 @@
 - **正常系フロー**:
     1. ユーザー入力（テキスト/音声）を受け取る。
     2. 入力内容をベクトル化し、Supabaseから関連ドキュメントを検索（最新のUpdate情報を優先）。
-    3. 検索結果とシステムプロンプト（メンター人格）をGemini APIに送信。
+    3. 検索結果とシステムプロンプト（メンター人格）をOpenAI APIに送信。
     4. 生成された回答をストリーミング形式で画面に表示する。
 - **例外系フロー**:
     - 関連情報が見つからない場合：「申し訳ありません、資料に関連情報が見当たりませんでした」と返し、フォームへ誘導する。
@@ -166,7 +166,7 @@ erDiagram
 - **documents**: RAG用データ。`pgvector` を使用。
     - `content`: ドキュメントのテキスト本文。
     - `metadata`: タイトル、日付（Update資料用）、ファイル名など。
-    - `embedding`: 埋め込みベクトル（Gemini embeddingsモデル準拠）。
+    - `embedding`: 埋め込みベクトル（OpenAI embeddingsモデル準拠）。
 - **chat_logs**: 分析用ログ。
     - `user_query`: ユーザーの質問文。
     - `ai_response`: AIの回答文。
@@ -174,7 +174,7 @@ erDiagram
 ## 8. インテグレーション要件
 
 ### 8.1 外部連携
-- **Gemini API (Google)**: チャット生成 (`gemini-2.0-flash` 推奨), Embeddings (`text-embedding-004`)。
+- **OpenAI API (OpenAI)**: チャット生成 (`gpt-4o-mini` 推奨), Embeddings (`text-embedding-3-small`)。
 - **Supabase**: ベクトルDB、ログ保存。
 - **Resend**: メール送信（問い合わせフォーム用）。※Vercel推奨のResendを仮定。
 
@@ -192,7 +192,7 @@ erDiagram
 - **Frontend**: Next.js (App Router), React, Tailwind CSS
 - **Backend**: Next.js Route Handlers (Server Actions)
 - **Database**: Supabase (PostgreSQL + pgvector)
-- **AI**: Gemini API (Google AI Studio)
+- **AI**: OpenAI API (OpenAI Platform)
 - **Auth**: 環境変数による簡易認証 (Middlewareで判定)
 - **Hosting**: Vercel
 
@@ -205,7 +205,7 @@ graph TD
         Page[React Components]
         API[API Routes / Server Actions]
     end
-    API -->|Generate| Gemini[Gemini API]
+    API -->|Generate| OpenAI[OpenAI API]
     API -->|Search/Log| Supabase[Supabase (DB)]
     API -->|Send Mail| Resend[Email Service]
     Admin[管理者] -->|Data Import| Supabase
@@ -239,7 +239,7 @@ graph TD
 ### 11.1 費用概算
 - **Vercel**: Hobbyプラン（無料）またはPro（$20/月）。MVP段階はHobbyで可。
 - **Supabase**: Free Tier（無料）。容量増えればPro（$25/月）。
-- **Gemini API**: Pay-as-you-go（無料枠あり、超過分も安価）。
+- **OpenAI API**: Pay-as-you-go（無料枠あり、超過分も安価）。
 - **Resend**: Free Tier（1日100通まで無料）。
 - **合計**: **月額0円〜数千円** で運用開始可能。
 

@@ -15,8 +15,8 @@
 | | **Tailwind CSS** | ユーティリティファーストなCSSフレームワークによる迅速なスタイリング。 |
 | **Backend** | **Next.js Route Handlers** | Next.jsに統合されたバックエンド機能により、別途バックエンドサーバーを構築する必要がない。Server Actionsによるデータ取得・更新の簡略化。 |
 | **Database** | **Supabase** | PostgreSQLベースのBaaS。pgvector拡張によるベクトル検索の容易さ、認証・ログ保存の手軽さ。 |
-| **AI / LLM** | **Gemini API** | 高速かつ低コストな生成AIモデル（gemini-2.0-flash推奨）。マルチモーダル対応の可能性。 |
-| | **Google AI Studio** | プロンプトエンジニアリングとモデル調整環境。 |
+| **AI / LLM** | **OpenAI API** | 高速かつ低コストな生成AIモデル（gpt-4o-mini推奨）。マルチモーダル対応の可能性。 |
+| | **OpenAI Platform** | プロンプトエンジニアリングとモデル調整環境。 |
 | **Auth** | **簡易認証 (Middleware)** | 環境変数を用いた共通パスワードによるアクセス制限。MVP段階での実装コスト削減。 |
 | **Hosting** | **Vercel** | Next.jsの開発元によるホスティングサービス。設定不要で最適化されたデプロイ環境を提供。 |
 | **Email** | **Resend** | 開発者フレンドリーなメール配信API。Vercelとの親和性が高い。 |
@@ -33,7 +33,7 @@ graph TD
         Page[React Components]
         API[API Routes / Server Actions]
     end
-    API -->|Generate| Gemini[Gemini API]
+    API -->|Generate| OpenAI[OpenAI API]
     API -->|Search/Log| Supabase[Supabase (DB)]
     API -->|Send Mail| Resend[Email Service]
     Admin[管理者] -->|Data Import| Supabase
@@ -45,8 +45,8 @@ graph TD
 -   **Vercel (Next.js)**: アプリケーションのホスティング環境および実行基盤。
     -   **Auth Middleware**: リクエストごとに共通パスワードによる認証状態をチェックし、未認証の場合はログイン画面へリダイレクトします。
     -   **React Components**: ユーザーインターフェースを構成するコンポーネント群。
-    -   **API Routes / Server Actions**: バックエンドロジックを実行し、外部サービス（Gemini, Supabase, Resend）と連携します。
--   **Gemini API**: ユーザーの質問に対する回答生成およびテキストのベクトル化（Embedding）を行います。
+    -   **API Routes / Server Actions**: バックエンドロジックを実行し、外部サービス（OpenAI, Supabase, Resend）と連携します。
+-   **OpenAI API**: ユーザーの質問に対する回答生成およびテキストのベクトル化（Embedding）を行います。
 -   **Supabase (DB)**: ドキュメントのベクトルデータ、チャットログなどを保存するデータベースです。
 -   **Resend**: 問い合わせフォームからのメール送信を処理します。
 -   **Admin (管理者)**: ドキュメントの更新やログの確認を行う管理者です（現状は直接DB操作やスクリプト実行を想定）。

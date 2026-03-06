@@ -24,46 +24,46 @@
 
 ### 3.1 準備フェーズ (Day 1-2)
 -   [ ] **環境構築**
-    -   Next.js プロジェクト作成 (TypeScript, Tailwind CSS)
-    -   Supabase プロジェクト作成 (Table, Vector extension)
-    -   Vercel プロジェクト連携
-    -   Gemini API キー取得 & 環境変数設定
+    -   [x] Next.js プロジェクト作成 (TypeScript, Tailwind CSS)
+    -   [x] Supabase プロジェクト作成 (Table, Vector extension)
+    -   [ ] Vercel プロジェクト連携
+    -   [x] OpenAI API キー取得 & 環境変数設定
 -   [ ] **リポジトリ設定**
-    -   GitHub リポジトリ作成
-    -   CI/CD パイプライン設定 (Vercel連携で自動化)
+    -   [x] GitHub リポジトリ作成
+    -   [ ] CI/CD パイプライン設定 (Vercel連携で自動化)
 
 ### 3.2 バックエンド & データ基盤 (Day 3-5)
--   [ ] **データベース実装**
-    -   `documents` テーブル作成
-    -   `chat_logs` テーブル作成
-    -   RAG用データスクリプト作成 (CSV/JSON -> Embedding -> Insert)
--   [ ] **API実装**
-    -   `POST /api/chat` (RAG検索処理, Gemini API連携, Streamレスポンス)
-    -   `POST /api/inquiry` (Resend連携メール送信)
-    -   簡易認証Middleware実装
+-   [x] **データベース実装**
+    -   [x] `documents` テーブル作成
+    -   [x] `chat_logs` テーブル作成
+    -   [x] RAG用データスクリプト作成 (CSV/JSON -> Embedding -> Insert)
+-   [x] **API実装**
+    -   [x] `POST /api/chat` (RAG検索処理, OpenAI API連携, Streamレスポンス)
+    -   [x] `POST /api/inquiry` (Resend連携メール送信)
+    -   [x] 簡易認証Middleware実装
 
 ### 3.3 フロントエンド実装 (Day 6-10)
--   [ ] **共通コンポーネント**
-    -   Layout, Header, Footer
-    -   Button, Input, Loading Spinner
--   [ ] **ページ実装**
-    -   ログイン画面 (パスワード入力)
-    -   チャット画面 (メッセージリスト, 入力エリア, マークダウン表示)
-    -   問い合わせフォーム画面
-    -   送信完了画面
+-   [x] **共通コンポーネント**
+    -   [x] Layout, Header, Footer
+    -   [x] Button, Input, Loading Spinner
+-   [x] **ページ実装**
+    -   [x] ログイン画面 (パスワード入力)
+    -   [x] チャット画面 (メッセージリスト, 入力エリア, マークダウン表示)
+    -   [x] 問い合わせフォーム画面
+    -   [x] 送信完了画面
 -   [ ] **機能実装**
-    -   `useChat` フック連携 (Vercel AI SDK)
-    -   音声入力 (Web Speech API)
-    -   クイック質問ボタン
+    -   [x] `useChat` フック連携 (Vercel AI SDK)
+    -   [ ] 音声入力 (Web Speech API)
+    -   [x] クイック質問ボタン
 
 ### 3.4 テスト & デプロイ (Day 11-14)
 -   [ ] **動作確認**
-    -   各ブラウザ/デバイス (PC, iPad, スマホ) での表示確認
-    -   音声入力テスト
-    -   RAG回答精度確認 (ハルシネーション有無)
+    -   [ ] 各ブラウザ/デバイス (PC, iPad, スマホ) での表示確認
+    -   [ ] 音声入力テスト
+    -   [ ] RAG回答精度確認 (ハルシネーション有無)
 -   [ ] **デプロイ**
-    -   VercelへのProductionデプロイ
-    -   環境変数 (本番用) 設定
+    -   [ ] VercelへのProductionデプロイ
+    -   [ ] 環境変数 (本番用) 設定
 
 ## 4. リスク管理
 
@@ -82,9 +82,9 @@
 ### 4.3 コスト超過
 -   **リスク**: チャット利用急増によるAPIコストの増大。
 -   **対策**:
-    -   Gemini APIのレートリミットを設定する。
+    -   OpenAI APIのレートリミットを設定する。
     -   Supabase等の無料枠監視アラートを設定する。
-    -   `gemini-2.0-flash` を利用し、コストパフォーマンスを維持する。
+    -   `gpt-4o-mini` を利用し、コストパフォーマンスを維持する。
 
 ## 5. 開発プロセス
 -   **バージョン管理**: GitHub Flow (mainブランチ保護, Featureブランチ開発)。
