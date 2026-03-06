@@ -2,10 +2,17 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Pentagon, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Message } from "ai";
+import type { UIMessage } from "ai";
+
+function getMessageText(message: UIMessage): string {
+  return message.parts
+    .filter((part): part is Extract<typeof part, { type: 'text' }> => part.type === 'text')
+    .map((part) => part.text)
+    .join('');
+}
 
 interface MessageListProps {
-  messages: Message[];
+  messages: UIMessage[];
   isLoading?: boolean;
   onQuickQuestionSelect?: (question: string) => void;
 }
@@ -18,7 +25,6 @@ const QUICK_QUESTIONS = [
 ];
 
 export function MessageList({ messages, isLoading, onQuickQuestionSelect }: MessageListProps) {
-  // 自動スクロール用のrefは親またはここで管理する想定
   const bottomRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -52,43 +58,46 @@ export function MessageList({ messages, isLoading, onQuickQuestionSelect }: Mess
         </div>
       )}
 
-      {messages.map((message) => (
-        <div
-          key={message.id}
-          className={cn(
-            "flex w-full max-w-3xl mx-auto gap-3",
-            message.role === "user" ? "justify-end" : "justify-start"
-          )}
-        >
-          {message.role === "assistant" && (
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-              <Pentagon className="h-5 w-5 text-[#007AFF]" />
-            </div>
-          )}
-          
+      {messages.map((message) => {
+        const text = getMessageText(message);
+        return (
           <div
+            key={message.id}
             className={cn(
-              "rounded-lg px-4 py-3 max-w-[80%] text-sm leading-relaxed shadow-sm",
-              message.role === "user"
-                ? "bg-[#007AFF] text-white"
-                : "bg-white border border-gray-100 text-gray-800"
+              "flex w-full max-w-3xl mx-auto gap-3",
+              message.role === "user" ? "justify-end" : "justify-start"
             )}
           >
-            {message.content.split('\n').map((line, i) => (
-              <React.Fragment key={i}>
-                {line}
-                {i !== message.content.split('\n').length - 1 && <br />}
-              </React.Fragment>
-            ))}
-          </div>
-
-          {message.role === "user" && (
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-              <User className="h-5 w-5 text-gray-500" />
+            {message.role === "assistant" && (
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                <Pentagon className="h-5 w-5 text-[#007AFF]" />
+              </div>
+            )}
+            
+            <div
+              className={cn(
+                "rounded-lg px-4 py-3 max-w-[80%] text-sm leading-relaxed shadow-sm",
+                message.role === "user"
+                  ? "bg-[#007AFF] text-white"
+                  : "bg-white border border-gray-100 text-gray-800"
+              )}
+            >
+              {text.split('\n').map((line, i, arr) => (
+                <React.Fragment key={i}>
+                  {line}
+                  {i !== arr.length - 1 && <br />}
+                </React.Fragment>
+              ))}
             </div>
-          )}
-        </div>
-      ))}
+
+            {message.role === "user" && (
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                <User className="h-5 w-5 text-gray-500" />
+              </div>
+            )}
+          </div>
+        );
+      })}
 
       {isLoading && (
         <div className="flex w-full max-w-3xl mx-auto gap-3 justify-start">

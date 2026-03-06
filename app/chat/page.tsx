@@ -1,24 +1,23 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useMemo } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { Header } from "@/components/layout/header";
 import { MessageList } from "@/components/chat/message-list";
 import { InputArea } from "@/components/chat/input-area";
 
+const chatTransport = new DefaultChatTransport({ api: '/api/chat' });
+
 export default function ChatPage() {
   const { messages, status, sendMessage } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
+    transport: chatTransport,
   });
 
   const isLoading = status === 'submitted' || status === 'streaming';
 
   const handleSendMessage = (content: string) => {
-    sendMessage({
-      role: 'user',
-      content: content,
-    });
+    sendMessage({ text: content });
   };
 
   return (

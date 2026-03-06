@@ -1,22 +1,28 @@
 import { createClient } from '@supabase/supabase-js';
 import { openai } from '@ai-sdk/openai';
-import { streamText } from 'ai';
+import { streamText, type UIMessage, convertToModelMessages } from 'ai';
 
-export const maxDuration = 30; // Vercelの最大実行時間 (秒)
+export const maxDuration = 30;
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+function getTextFromUIMessage(message: UIMessage): string {
+  return message.parts
+    .filter((p): p is Extract<typeof p, { type: 'text' }> => p.type === 'text')
+    .map((p) => p.text)
+    .join('');
+}
+
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json();
+    const { messages } = (await req.json()) as { messages: UIMessage[] };
 
-    // 最新のユーザーのメッセージを取得
-    const lastMessage = messages[messages.length - 1];
-    const userQuery = lastMessage.content;
+    const lastUserMessage = [...messages].reverse().find((m) => m.role === 'user');
+    const userQuery = lastUserMessage ? getTextFromUIMessage(lastUserMessage) : '';
 
-    // 1. ユーザーの質問をベクトル化 (OpenAI APIを直接呼び出し)
+    // 1. ユーザーの質問をベクトル化
     const embeddingResponse = await fetch('https://api.openai.com/v1/embeddings', {
       method: 'POST',
       headers: {
@@ -36,10 +42,10 @@ export async function POST(req: Request) {
     const embeddingData = await embeddingResponse.json();
     const embedding = embeddingData.data[0].embedding;
 
-    // 2. Supabaseで類似ドキュメントを検索 (設定したRPC関数を呼び出す)
+    // 2. Supabaseで類似ドキュメントを検索
     const { data: documents, error } = await supabase.rpc('match_documents', {
       query_embedding: embedding,
-      match_count: 5, // 関連性が高い上位5件を取得
+      match_count: 5,
     });
 
     if (error) {
@@ -66,13 +72,14 @@ export async function POST(req: Request) {
 ${contextText}
 `;
 
-    // 4. Vercel AI SDKを使用してストリーミングレスポンスを生成
+    // 4. UIMessage → ModelMessage に変換して streamText に渡す
+    const modelMessages = await convertToModelMessages(messages);
+
     const result = streamText({
       model: openai('gpt-4o-mini'),
       system: systemPrompt,
-      messages,
+      messages: modelMessages,
       async onFinish({ text }) {
-        // 会話ログをデータベースに保存
         try {
           await supabase.from('chat_logs').insert({
             user_query: userQuery,
@@ -84,7 +91,7 @@ ${contextText}
       },
     });
 
-    return result.toTextStreamResponse();
+    return result.toUIMessageStreamResponse();
   } catch (error) {
     console.error('Chat API Error:', error);
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
