@@ -41,10 +41,8 @@ create or replace function match_documents (
   metadata jsonb,
   similarity float
 )
-language plpgsql
+language sql
 as $$
-begin
-  return query
   select
     documents.id,
     documents.content,
@@ -52,9 +50,8 @@ begin
     1 - (documents.embedding <=> query_embedding) as similarity
   from documents
   -- JSONBに含まれるキー/バリューでフィルタリング（任意）
-  where metadata @> filter
+  where documents.metadata @> filter
   -- コサイン類似度（距離）でソート
   order by documents.embedding <=> query_embedding
   limit match_count;
-end;
 $$;

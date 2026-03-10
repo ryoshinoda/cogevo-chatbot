@@ -1,4 +1,6 @@
 import React from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
 import { Pentagon, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -82,12 +84,35 @@ export function MessageList({ messages, isLoading, onQuickQuestionSelect }: Mess
                   : "bg-white border border-gray-100 text-gray-800"
               )}
             >
-              {text.split('\n').map((line, i, arr) => (
-                <React.Fragment key={i}>
-                  {line}
-                  {i !== arr.length - 1 && <br />}
-                </React.Fragment>
-              ))}
+              {message.role === "user" ? (
+                <div className="whitespace-pre-wrap">{text}</div>
+              ) : (
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                    ul: ({ node, ...props }) => <ul className="mb-2 list-disc pl-5" {...props} />,
+                    ol: ({ node, ...props }) => <ol className="mb-2 list-decimal pl-5" {...props} />,
+                    li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+                    strong: ({ node, ...props }) => <strong className="font-bold text-gray-900" {...props} />,
+                    h1: ({ node, ...props }) => <h1 className="text-lg font-bold mt-4 mb-2" {...props} />,
+                    h2: ({ node, ...props }) => <h2 className="text-md font-bold mt-3 mb-2" {...props} />,
+                    h3: ({ node, ...props }) => <h3 className="text-base font-semibold mt-3 mb-2" {...props} />,
+                    a: ({ node, ...props }) => <a className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer" {...props} />,
+                    code: ({ node, inline, ...props }: any) => 
+                      inline ? (
+                        <code className="bg-gray-100 px-1 py-0.5 rounded text-sm text-gray-800" {...props} />
+                      ) : (
+                        <pre className="bg-gray-100 p-3 rounded-md overflow-x-auto my-2 text-sm text-gray-800">
+                          <code {...props} />
+                        </pre>
+                      ),
+                    blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-gray-200 pl-4 py-1 italic my-2 text-gray-600" {...props} />
+                  }}
+                >
+                  {text}
+                </ReactMarkdown>
+              )}
             </div>
 
             {message.role === "user" && (
