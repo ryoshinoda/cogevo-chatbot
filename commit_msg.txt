@@ -1,4 +1,5 @@
-Fix build errors and SQL ambiguity
+ドキュメントとAPIの更新
 
-- `components/chat/input-area.tsx` の `SpeechRecognition` の型エラーを修正 (`(window as any).SpeechRecognition` に変更)
-- `supabase/setup.sql` の `match_documents` 関数で発生していた `column reference "metadata" is ambiguous` エラーを解消するため、言語を `plpgsql` から `sql` に変更
+- Knowledge Baseの更新
+- 開発計画ドキュメントの更新
+- チャットAPIルートの調整
